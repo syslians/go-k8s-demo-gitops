@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-k8s-demo
+  namespace: prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-k8s-demo
+  template:
+    metadata:
+      labels:
+        app: go-k8s-demo
+    spec:
+      containers:
+        - name: go-k8s-demo
+          image: ghcr.io/syslians/go-k8s-demo:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
